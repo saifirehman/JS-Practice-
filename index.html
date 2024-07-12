@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form with Local Storage and Table Display</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <form id="userForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+        <br><br>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <br><br>
+        <button type="submit">Submit</button>
+    </form>
+
+    <br>
+    <h2>Stored Users:</h2>
+    <table id="userTable">
+        <thead>
+            <tr>
+                <th>Index</th>
+                <th>Name</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Data will be inserted here -->
+        </tbody>
+    </table>
+
+    <script>
+        // Function to display users from local storage to table
+        function displayUsers() {
+            var userTableBody = document.getElementById('userTable').getElementsByTagName('tbody')[0];
+            userTableBody.innerHTML = ''; // Clear the table
+
+            var users = JSON.parse(localStorage.getItem('users')) || [];
+
+            users.forEach(function(user, index) {
+                var row = userTableBody.insertRow();
+
+                var cellIndex = row.insertCell(0);
+                var cellName = row.insertCell(1);
+                var cellEmail = row.insertCell(2);
+
+                cellIndex.textContent = index + 1;
+                cellName.textContent = user.name;
+                cellEmail.textContent = user.email;
+            });
+        }
+
+        document.getElementById('userForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // Get the input values
+            var name = document.getElementById('name').value;
+            var email = document.getElementById('email').value;
+
+            // Retrieve existing users from local storage
+            var users = JSON.parse(localStorage.getItem('users')) || [];
+
+            // Add new user to the array
+            users.push({ name: name, email: email });
+
+            // Store the updated array back to local storage
+            localStorage.setItem('users', JSON.stringify(users));
+
+            // Display the updated list of users
+            displayUsers();
+
+            // Clear the form fields
+            document.getElementById('userForm').reset();
+        });
+
+        // Display users when the page loads
+        document.addEventListener('DOMContentLoaded', displayUsers);
+    </script>
+</body>
+</html>
